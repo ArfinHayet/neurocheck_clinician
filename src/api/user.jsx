@@ -1,5 +1,32 @@
 import { domain } from "../../credentials";
 
+// Get user by ID
+const getUserById = async (userId) => {
+  const response = await fetch(`${domain}/users/${userId}`, {
+    method: "GET",
+    headers: {
+      authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+const updateUserProfile = async (userId, userData) => {
+  const response = await fetch(`${domain}/users/${userId}`, {
+    method: "PUT", 
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    },
+    body: JSON.stringify(userData),
+  });
+
+  const data = await response.json();
+  return data;
+};
+
 const addClinicianAvailabilty = async (obj) => {
   const response = await fetch(`${domain}/availabilities`, {
     method: "POST",
@@ -70,4 +97,6 @@ export {
   getLeavesById,
   getBillingInfo,
   getCinicianAvailabilityById,
+  getUserById,
+  updateUserProfile,
 };

@@ -1,13 +1,9 @@
-
-
 import { useState, useRef, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
-import p1 from "../../../public/svg/user-img.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAge } from "../utils/ageConverter";
 import { timeConverter } from "../utils/timeconverter";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+
 const AssessmentCard = ({
   name,
   age,
@@ -18,13 +14,14 @@ const AssessmentCard = ({
   onViewFullAssessment,
   onRateSummary,
   onAcceptCase,
+  onDeclineCase,
   ratings,
   patientId,
   assessmentId,
 }) => {
-  // //console.log("answers",timeAgo)
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,115 +34,67 @@ const AssessmentCard = ({
   }, []);
 
   const colors = {
-    completed: "bg-[#EBF6EC] text-[#4CAF50]",
-    pending: "bg-yellow-100 text-yellow-800",
-    rejected: "bg-red-100 text-red-800",
+    completed: "bg-green-100 text-green-700 border-green-200",
+    pending: "bg-orange-100 text-orange-700 border-orange-200",
+    rejected: "bg-red-100 text-red-700 border-red-200",
   };
 
   const statusKey =
     status && status.trim() !== "" ? status.toLowerCase() : "pending";
   const statusClass = colors[statusKey] || colors.pending;
 
-  const generateConsultancyReport = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
-
-    let y = 40;
-
-    // ------------------- TITLE -------------------
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor("#171717");
-    doc.text("Report Structure ADHD Adult", 40, y);
-
-    y += 25;
-
-    // ------------------- TABLE DATA -------------------
-    const tableData = [
-      ["Patient Name", "XX YY"],
-      ["Age", "YY"],
-      ["Demographics", "XX"],
-      ["Clinician Diagnosis", ""],
-      ["Clinician Notes from Review", ""],
-      ["Clinician Notes Post Consultation", ""],
-      ["Diagnosis Recommendation", "Exhibits ADHD type XX / YY / ZZ"],
-    ];
-
-    autoTable(doc, {
-      startY: y,
-      head: [],
-      body: tableData,
-      theme: "grid",
-
-      styles: {
-        fontSize: 11,
-        cellPadding: 10,
-        valign: "middle",
-      },
-
-      columnStyles: {
-        0: { cellWidth: 150, fontStyle: "bold" },
-        1: { cellWidth: 350 },
-      },
-
-      tableWidth: 500,
-    });
-
-    // After table ends
-    y = doc.lastAutoTable.finalY + 30;
-
-    // ------------------- NORMAL SECTIONS -------------------
-    const leftX = 40;
-
-    const writeSection = (title, text) => {
-      doc.setFontSize(13);
-      doc.setFont("helvetica", "bold");
-      doc.text(title, leftX, y);
-      y += 15;
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-
-      const wrapped = doc.splitTextToSize(text, 500);
-      doc.text(wrapped, leftX, y);
-      y += wrapped.length * 12 + 15;
-    };
-
-    writeSection("Medical History Summary", "Lorem ipsum dolor sit amet...");
-    writeSection("ASRS Summary", "Key areas rated very often...");
-    writeSection("Weiss Rating Summary", "# of items scored 2 or 3...");
-    writeSection("DIVA Summary", "# of childhood/adulthood criteria met...");
-
-    // ------------------- SAVE PDF -------------------
-    doc.save("consultancy-report.pdf");
+  const handleCardClick = () => {
+    navigate(`/assessment/${patientId}/${assessmentId}`);
   };
 
   return (
-    <div className="bg-[#FFFFFF] rounded-lg p-4 shadow-sm">
+    <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex gap-4">
-          <img
-            src={p1}
-            alt={name || "User"}
-            height={40}
-            width={40}
-            className="w-10 h-10 rounded-full"
-            priority
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-semibold">{name}</h2>
-              <span
-                className={`px-2 py-0.5 md:block hidden rounded-md text-xs ${statusClass}`}
+        <div className="flex gap-4 flex-1">
+          {/* Avatar with initials */}
+          {/* <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+            {name
+              ?.split(" ")
+              .map((n) => n[0])
+              .join("") || "NA"}
+          </div> */}
+          <img className=""/>
+
+          <div className="flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Clickable name */}
+              <h2
+                onClick={handleCardClick}
+                className="font-semibold text-slate-900 cursor-pointer hover:text-blue-600 transition-colors"
               >
-                {/* {(status || "").toUpperCase()} */}
+                {name}
+              </h2>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusClass}`}
+              >
                 {status && status.trim() !== ""
                   ? status.toUpperCase()
                   : "PENDING"}
               </span>
+              {ratings && (
+                <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-md text-xs font-medium">
+                  ⭐ {ratings}
+                </span>
+              )}
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500 mt-1">
               {getAge(age)} years • {timeConverter(timeAgo)}
             </p>
+
+            {/* Content - clickable area */}
+            <div onClick={handleCardClick} className="mt-3 cursor-pointer">
+              <p className="font-semibold text-sm text-slate-900">
+                {childCondition}
+              </p>
+              <p className="text-slate-600 text-xs mt-1 line-clamp-2">
+                {description}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -153,61 +102,52 @@ const AssessmentCard = ({
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((v) => !v)}
-            className="p-1 rounded hover:bg-gray-100 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
             aria-label="More options"
           >
-            <FiMoreVertical size={20} />
+            <FiMoreVertical size={20} className="text-slate-600" />
           </button>
 
           {menuOpen && (
             <div
               role="menu"
-              className="absolute right-0 mt-2 w-48 bg-white rounded shadow-md z-10"
+              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-20 overflow-hidden"
             >
-             
-              
-
               {status !== "completed" && (
-                <button
-                  onClick={() => {
-                    onAcceptCase?.();
-                    setMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 cursor-pointer text-sm text-[#114654]"
-                  role="menuitem"
-                >
-                  Accept this case
-                </button>
+                <>
+                  <button
+                    onClick={() => {
+                      onAcceptCase?.();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-green-50 cursor-pointer text-sm text-slate-700 hover:text-green-700 font-medium transition-colors border-b border-slate-100"
+                    role="menuitem"
+                  >
+                     Accept this case
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDeclineCase?.();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 hover:bg-red-50 cursor-pointer text-sm text-slate-700 hover:text-red-700 font-medium transition-colors"
+                    role="menuitem"
+                  >
+                     Decline this case
+                  </button>
+                </>
+              )}
+              {status === "completed" && (
+                <p className="px-4 py-3 text-sm text-slate-500 text-center">
+                  Case completed
+                </p>
               )}
             </div>
           )}
         </div>
       </div>
-
-      {/* Content */}
-      <Link
-        className="no-underline"
-        href={`/assessment/${patientId}/${assessmentId}`}
-      >
-        <div className="flex-1 mt-5">
-          <div className="flex flex-row gap-2">
-            <p className="font-semibold text-sm mt-2 text-[#4B4B4B]">
-              {childCondition}
-            </p>
-            <p
-              className={`px-2 py-0.5 mt-[10px] md:hidden rounded-md text-xs ${statusClass}`}
-            >
-              {(status || "").toUpperCase()}
-            </p>
-            <p className="px-2 py-0.5 mt-[8px]  rounded-md text-xs ">
-              rating:{ratings}
-            </p>
-          </div>
-          <p className="text-[#3C3C4399] text-xs mt-1">{description}</p>
-        </div>
-      </Link>
     </div>
   );
 };

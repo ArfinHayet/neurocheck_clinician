@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Availability from "../../components/Availability";
 import Leave from "./Leave";
 import Invoice from "../Invoice/Invoice";
+import PersonalInfo from "../../components/PersonalInfo";
 
 const Profile = () => {
   const tabs = ["Personal Info", "Availability", "Leave", "Invoices"];
@@ -46,11 +47,7 @@ const Profile = () => {
       />
 
       <div className="mt-4 min-h-screen">
-        {selectedTab === "Personal Info" && (
-          <div className="grid grid-cols-3 gap-10">
-            <p>…content…</p>
-          </div>
-        )}
+        {selectedTab === "Personal Info" &&  <PersonalInfo/> }
         {selectedTab === "Availability" && <Availability />}
         {selectedTab === "Leave" && <Leave />}
         {selectedTab === "Invoices" && <Invoice />}

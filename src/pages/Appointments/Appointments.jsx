@@ -1,30 +1,32 @@
-
 import { getAllappointments, updateSchedule } from "../../api/assessment";
 import Header from "../../components/ui-reusable/Header";
 import { formatDate } from "../../components/utils/formateDate";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { MdEditCalendar } from "react-icons/md";
-import { IoEyeSharp } from "react-icons/io5";
-import { FaUserEdit } from "react-icons/fa";
+import { MdEditCalendar, MdVideoCall } from "react-icons/md";
+import { IoEyeSharp, IoCalendarSharp } from "react-icons/io5";
+import { FaUserEdit, FaSearch } from "react-icons/fa";
 import { PiVideoCameraBold } from "react-icons/pi";
+import { BiSortAlt2 } from "react-icons/bi";
+import { HiCheckCircle, HiXCircle, HiClock } from "react-icons/hi";
 import Modal from "../../components/ui-reusable/Modal";
+import { IoFilter } from "react-icons/io5";
 
 const statusColors = {
-  Confirmed: "bg-green-100 text-green-600",
-  Rescheduled: "bg-orange-100 text-orange-600",
-  Cancelled: "bg-red-100 text-red-600",
-  Unknown: "bg-gray-100 text-gray-600",
+  Confirmed: "bg-green-100 text-green-700 border-green-200",
+  Rescheduled: "bg-orange-100 text-orange-700 border-orange-200",
+  Cancelled: "bg-red-100 text-red-700 border-red-200",
+  Unknown: "bg-gray-100 text-gray-700 border-gray-200",
 };
 
 const callStatusColors = {
-  Active: "text-green-600",
-  Escalated: "text-blue-600",
-  Resolved: "text-purple-600",
-  Dropped: "text-orange-600",
-  Scheduled: "text-purple-600",
-  Missed: "text-red-600",
+  Active: "text-green-600 bg-green-50", //metting running
+  Escalated: "text-blue-600 bg-blue-50", //priority
+  Resolved: "text-purple-600 bg-purple-50", //completed
+  Dropped: "text-orange-600 bg-orange-50", //disconnected
+  Scheduled: "text-purple-600 bg-purple-50", //upcming , not done
+  Missed: "text-red-600 bg-red-50", //patient didn't joined
 };
 
 const Appointments = () => {
@@ -36,13 +38,16 @@ const Appointments = () => {
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointment, setAppointment] = useState([]);
   const [notes, setNotes] = useState("");
+  const [confirmReschedule, setConfirmReschedule] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const fetchAppointments = async () => {
     const res = await getAllappointments();
     const rawData = res?.payload?.filter(
       (i) => i?.clinicianId === Number(userData?.id),
     );
-    //console.log("appppp", rawData);
+    console.log(rawData);
     setAppointment(rawData);
   };
 
@@ -63,8 +68,6 @@ const Appointments = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //console.log("reschedule", selectedAppointment);
-
     if (selectedAppointment?.tries >= 3) {
       alert(
         "This patient has already reached the maximum number of reschedules (3).",
@@ -82,8 +85,6 @@ const Appointments = () => {
       tries: (selectedAppointment?.tries || 0) + 1,
     };
 
-    //console.log("apppp", payload);
-
     const result = await updateSchedule(selectedAppointment?.id, payload);
 
     setRescheduleModal(false);
@@ -92,169 +93,453 @@ const Appointments = () => {
 
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
-
-    //console.log("reschedulefedd", selectedAppointment);
-
-    // const payload = {
-    //   diagnosis: diagnosis,
-    //   notes_from_review: notes,
-    // };
-
-    // //console.log("appppfeed", payload);
-
-    // const result = await updateSchedule(selectedAppointment?.id, payload);
-
     setFeedbackModal(false);
     fetchAppointments();
   };
 
+  // Filter appointments
+  const filteredAppointments = appointment?.filter((appt) => {
+    const matchesSearch = appt.patient?.name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filterStatus === "all" || appt.status === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-8">
       <Header
-        title="Appointment List"
-        description="Your central hub for tracking assessments, reviewing patient insights, and managing your schedule"
+        title="Appointments"
+        description="Manage your consultations, reschedule appointments, and track patient meetings"
       />
 
-      <div className="">
-        <table className="w-full text-center border-collapse">
-          <thead className="">
-            <tr>
-              <th className="p-3">Patient Name</th>
-              <th className="p-3">Appointment Status</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Call Status</th>
-              <th className="p-3">No of Retries</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointment?.map((appt) => (
-              <tr
-                key={appt.id}
-                className="border-b text-center text-gray-600 text-xs border-[#DFDFDF] hover:bg-gray-50"
-              >
-                <td className="p-3">{appt.patient?.name}</td>
-                <td
-                  className={`text-center text-xs mt-4 px-2 py-1 inline-block rounded-full ${statusColors[appt.status]}`}
-                >
-                  {appt.status}
-                </td>
-                <td className="p-3">{formatDate(appt.time)}</td>
-                <td className={`p-3 ${callStatusColors[appt.metting_status]}`}>
-                  {appt.metting_status}
-                </td>
-                <td className="p-3">{appt.tries}</td>
-                <td>
-                  <p className="flex justify-center items-center gap-4">
-                    <Link
-                      className=" cursor-pointer"
-                      href={appt.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {" "}
-                      <span>
-                        <PiVideoCameraBold size={16} />
-                      </span>
-                    </Link>
-                    <span>
-                      <IoEyeSharp
-                        className="cursor-pointer"
-                        size={16}
-                        onClick={() => {
-                          setSelectedAppointment(appt);
-                          setShowModal(true);
-                        }}
-                      />
-                    </span>
-                    <span>
-                      <FaUserEdit
-                        size={16}
-                        className=" cursor-pointer"
-                        onClick={() => {
-                          setSelectedAppointment(appt);
-                          setFeedbackModal(true);
-                        }}
-                      />
-                    </span>
-                    <span>
-                      <MdEditCalendar
-                        size={16}
-                        className=" cursor-pointer"
-                        onClick={() => {
-                          setSelectedAppointment(appt);
-                          setRescheduleModal(true);
-                        }}
-                      />
-                    </span>
-                  </p>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div>{/* <BasicTable/> */}</div>
+      <div className=" mx-auto">
+        {/* Stats Cards */}
+        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 font-medium">
+                  Total Appointments
+                </p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">
+                  {appointment?.length || 0}
+                </p>
+              </div>
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <IoCalendarSharp className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
 
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 font-medium">Confirmed</p>
+                <p className="text-2xl font-bold text-green-600 mt-1">
+                  {appointment?.filter((a) => a.status === "Confirmed")
+                    .length || 0}
+                </p>
+              </div>
+              <div className="p-3 bg-green-50 rounded-lg">
+                <HiCheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 font-medium">
+                  Rescheduled
+                </p>
+                <p className="text-2xl font-bold text-orange-600 mt-1">
+                  {appointment?.filter((a) => a.status === "Rescheduled")
+                    .length || 0}
+                </p>
+              </div>
+              <div className="p-3 bg-orange-50 rounded-lg">
+                <HiClock className="w-6 h-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-600 font-medium">Cancelled</p>
+                <p className="text-2xl font-bold text-red-600 mt-1">
+                  {appointment?.filter((a) => a.status === "Cancelled")
+                    .length || 0}
+                </p>
+              </div>
+              <div className="p-3 bg-red-50 rounded-lg">
+                <HiXCircle className="w-6 h-6 text-red-600" />
+              </div>
+            </div>
+          </div>
+        </div> */}
+
+        {/* Filters and Search */}
+        <div className=" flex justify-end  slate-200 mb-4 ">
+          <div className="flex  gap-4 items-center justify-between">
+            <div className="relative flex-1 w-full">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by patient name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div className="flex gap-3 w-auto">
+              <div className="relative">
+                <IoFilter
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 pointer-events-none"
+                  size={16}
+                />
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+                >
+                  <option value="all">All Status</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="Rescheduled">Rescheduled</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Appointments Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Patient Name
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Appointment Status
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Date & Time
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Call Status
+                  </th>
+                  <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Retries
+                  </th>
+                  <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 py-6">
+                {filteredAppointments?.map((appt) => (
+                  <tr
+                    key={appt.id}
+                    className="hover:bg-slate-50 transition-colors  "
+                  >
+                    <td className="px-6 py-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary flex items-center justify-center text-white font-semibold text-sm">
+                          {appt.patient?.name
+                            ?.split(" ")
+                            .map((n) => n[0])
+                            .join("") || "NA"}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900 text-sm">
+                            {appt.patient?.name}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 ">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                          statusColors[appt.status] || statusColors.Unknown
+                        }`}
+                      >
+                        {appt.status}
+                      </span>
+                    </td>
+                    <td className="px-6 ">
+                      <p className=" font-medium text-slate-900 text-xs">
+                        {formatDate(appt.time)}
+                      </p>
+                    </td>
+                    <td className="px-6 ">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                          callStatusColors[appt.metting_status] ||
+                          "bg-gray-50 text-gray-700"
+                        }`}
+                      >
+                        {appt.metting_status}
+                      </span>
+                    </td>
+                    <td className="px-6  text-center">
+                      <span
+                        className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
+                          appt.tries >= 3
+                            ? "bg-red-100 text-red-700"
+                            : appt.tries >= 2
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {appt.tries}
+                      </span>
+                    </td>
+                    <td className="px-6 ">
+                      <div className="flex justify-center items-center gap-2">
+                        <Link
+                          to={appt.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors group"
+                          title="Join Video Call"
+                        >
+                          <PiVideoCameraBold className="w-5 h-5 text-slate-600 group-hover:text-blue-600" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setSelectedAppointment(appt);
+                            setShowModal(true);
+                          }}
+                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors group"
+                          title="View Details"
+                        >
+                          <IoEyeSharp className="w-5 h-5 text-slate-600 group-hover:text-blue-600" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (appt.metting_status !== "Resolved") return;
+                            setSelectedAppointment(appt);
+                            setFeedbackModal(true);
+                          }}
+                          className={`p-2 rounded-lg transition-colors group ${
+                            appt.metting_status === "Resolved"
+                              ? "hover:bg-purple-50"
+                              : "opacity-40 cursor-not-allowed"
+                          }`}
+                          title={
+                            appt.metting_status === "Resolved"
+                              ? "Add Feedback"
+                              : "Complete meeting first to add feedback"
+                          }
+                          disabled={appt.metting_status !== "Resolved"}
+                        >
+                          <FaUserEdit
+                            className={`w-5 h-5 ${
+                              appt.metting_status === "Resolved"
+                                ? "text-slate-600 group-hover:text-purple-600"
+                                : "text-slate-400"
+                            }`}
+                          />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (appt.tries >= 3) return;
+                            setSelectedAppointment(appt);
+                            setConfirmReschedule(true);
+                          }}
+                          className={`p-2 rounded-lg transition-colors group ${
+                            appt.tries >= 3
+                              ? "opacity-40 cursor-not-allowed"
+                              : "hover:bg-orange-50"
+                          }`}
+                          title={
+                            appt.tries >= 3
+                              ? "Maximum reschedules reached"
+                              : "Reschedule"
+                          }
+                          disabled={appt.tries >= 3}
+                        >
+                          <MdEditCalendar
+                            className={`w-5 h-5 ${
+                              appt.tries >= 3
+                                ? "text-slate-400"
+                                : "text-slate-600 group-hover:text-orange-600"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {filteredAppointments?.length === 0 && (
+              <div className="text-center py-12">
+                <IoCalendarSharp className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500 font-medium">
+                  No appointments found
+                </p>
+                <p className="text-sm text-slate-400 mt-1">
+                  Try adjusting your search or filters
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Confirm Reschedule Modal */}
       {selectedAppointment && (
         <Modal
-          classname="w-[65vw] lg:w-[34vw] h-auto"
-          isOpen={showModal}
-          closeModal={closeModal}
-          title="Appointment Details"
+          classname="w-[90vw] md:w-[28vw]"
+          isOpen={confirmReschedule}
+          closeModal={() => setConfirmReschedule(false)}
+          title="Confirm Reschedule"
         >
-          <div className="space-y-2 text-sm">
-            <p>
-              <strong>Patient Name:</strong> {selectedAppointment.displayName}
-            </p>
-            <p>
-              <strong>Status:</strong> {selectedAppointment.status}
-            </p>
-            <p>
-              <strong>Date:</strong> {formatDate(selectedAppointment.time)}
-            </p>
-            <p>
-              <strong>Call Status:</strong> {selectedAppointment.metting_status}
-            </p>
-            <p>
-              <strong>Tries:</strong> {selectedAppointment.tries}
-            </p>
-            <p>
-              <strong>Diagnosis:</strong>{" "}
-              {selectedAppointment.diagnosis ?? "N/A"}
-            </p>
-            <p>
-              <strong>Notes:</strong>{" "}
-              {selectedAppointment.notes_from_review ?? "N/A"}
-            </p>
+          <div className="text-sm text-slate-700 space-y-4">
+            <p>Are you sure you want to reschedule this appointment?</p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+                onClick={() => setConfirmReschedule(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all"
+                onClick={() => {
+                  setConfirmReschedule(false);
+                  setRescheduleModal(true);
+                }}
+              >
+                Yes, Reschedule
+              </button>
+            </div>
           </div>
         </Modal>
       )}
 
+      {/* View Details Modal */}
       {selectedAppointment && (
         <Modal
-          classname="w-[65vw] lg:w-[34vw] h-auto"
+          classname="w-[45vw] max-h-[70vh]"
+          isOpen={showModal}
+          closeModal={closeModal}
+          title={
+            <div className="flex items-center justify-between gap-4 w-full pr-8">
+              <span>Appointment Details</span>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                  statusColors[selectedAppointment.status]
+                }`}
+              >
+                {selectedAppointment.status}
+              </span>
+            </div>
+          }
+        >
+          <div className="space-y-2">
+            <div className="px-4 py-2 bg-slate-50 rounded-lg flex items-center gap-4 w-full">
+              <p className="text-sm text-slate-600 mb-1">Patient Name</p>
+              <p className="font-semibold text-slate-900">
+                {selectedAppointment.displayName}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-600 mb-1">Call Status</p>
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                    callStatusColors[selectedAppointment.metting_status]
+                  }`}
+                >
+                  {selectedAppointment.metting_status}
+                </span>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <p className="text-xs text-slate-600 mb-1">Date & Time</p>
+                <p className="font-semibold text-slate-900 text-sm">
+                  {formatDate(selectedAppointment.time)}
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <p className="text-xs text-slate-600 mb-1">Number of Retries</p>
+                <p className="font-semibold text-slate-900">
+                  {selectedAppointment.tries}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-600 mb-1">Diagnosis</p>
+              <p className="text-slate-900">
+                {selectedAppointment.diagnosis ?? "N/A"}
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-lg">
+              <p className="text-xs text-slate-600 mb-1">Notes</p>
+              <p className="text-slate-900">
+                {selectedAppointment.notes_from_review ?? "N/A"}
+              </p>
+            </div>
+          </div>
+        </Modal>
+      )}
+      {/* Reschedule Modal */}
+      {selectedAppointment && (
+        <Modal
+          classname="w-[90vw] md:w-[32vw]"
           isOpen={rescheduleModal}
           closeModal={closeRescheduleModal}
           title="Reschedule Appointment"
         >
-          <form onSubmit={handleSubmit} className="space-y-2 text-sm">
-            <input
-              type="datetime-local"
-              value={appointmentDate}
-              onChange={(e) => setAppointmentDate(e.target.value)}
-              className="w-full pl-4 pr-10 py-2 border border-[#E2E2E2] rounded bg-[#F9F9F9] text-sm text-gray-700 appearance-none focus:outline-none focus:ring-2 focus:ring-[#0A4863]"
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Select New Date & Time
+              </label>
+              <input
+                type="datetime-local"
+                value={appointmentDate}
+                onChange={(e) => setAppointmentDate(e.target.value)}
+                className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            {selectedAppointment?.tries >= 2 && (
+              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-sm text-orange-800">
+                  ⚠️ Warning: This appointment has been rescheduled{" "}
+                  {selectedAppointment.tries} time(s). Maximum limit is 3.
+                </p>
+              </div>
+            )}
+
             <button
-              className="w-full cursor-pointer bg-[#0A4863] text-white rounded-lg py-2 shadow"
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
               type="submit"
             >
-              Submit
+              Confirm Reschedule
             </button>
           </form>
         </Modal>
       )}
 
+      {/* Feedback Modal */}
       {selectedAppointment && (
         <Modal
           classname="w-[65vw] lg:w-[34vw] h-auto"
@@ -262,29 +547,30 @@ const Appointments = () => {
           closeModal={closeFeedBackModal}
           title="Post Appointment Feedback"
         >
-          <form onSubmit={handleSubmitFeedback}>
-            <label className="block font-medium text-sm text-[#3B3B3B] mb-2">
-              Clinician Notes Post Consultation
-            </label>
-
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full h-36 rounded border border-[#E2E2E2] p-4 bg-gray-50 resize-none outline-none"
-            />
-
-            <div className="mt-2 mb-9">
-              <button
-                className="w-full cursor-pointer bg-[#0A4863] text-white rounded-lg py-2 shadow"
-                type="submit"
-              >
-                Submit
-              </button>
+          <form onSubmit={handleSubmitFeedback} className="space-y-4">
+            <div>
+              <label className="block font-medium text-sm text-slate-700 mb-2">
+                Clinician Notes Post Consultation
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full h-36 rounded-lg border border-slate-200 p-4 bg-slate-50 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                placeholder="Enter your notes here..."
+              />
             </div>
+
+            <button
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
+              type="submit"
+            >
+              Submit Feedback
+            </button>
           </form>
         </Modal>
       )}
     </div>
   );
 };
+
 export default Appointments;

@@ -92,8 +92,8 @@ const Availability = () => {
   }, [userData?.id]);
 
   return (
-    <div className="w-full flex flex-row gap-6">
-      <div className="w-3/6 flex flex-col gap-4 mt-10 space-y-4">
+    <div className="w-full flex flex-row gap-6 px-8">
+      <div className="w-3/6 flex flex-col gap-4  space-y-4">
         <div>
           <label className="block mb-4 text-[#5A5A5A] font-semibold text-sm">
             Availability type

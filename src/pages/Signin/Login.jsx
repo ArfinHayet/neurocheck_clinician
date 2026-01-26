@@ -1,6 +1,6 @@
 
 import LoginForm from "../../components/Authentication/LoginForm";
-import p1 from "../../../public/svg/web_logo.svg";
+import p1 from "../../../public/svg/blacklogo.png";
 
 
 const Login = () => {
@@ -11,9 +11,9 @@ const Login = () => {
           <img
             alt="logo"
             src={p1}
-            width={80}
-            height={80}
-            className="w-11 h-11"
+            width={800}
+            height={800}
+            className="w-auto h-11"
           />
         </div>
         <h2 className="text-2xl font-semibold text-[#000000] text-start my-4">

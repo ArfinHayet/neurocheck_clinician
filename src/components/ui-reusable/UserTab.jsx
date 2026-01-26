@@ -1,14 +1,49 @@
+import { useContext, useEffect, useState } from "react";
 import Header from "./Header";
+import { getUserById } from "../../api/user";
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const UserTab = ({ tabs, selected, setSelected, title, description }) => {
-    return (
-      <div>
-        <Header
-        title={title}
-        description={description}
-        />    
-             
-      <div className="flex flex-row items-center gap-12 border-b  border-[#E0E0E0]">
+  const { userData } = useContext(AuthContext) || {};
+  const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (userData?.id) {
+        setLoading(true);
+        try {
+          const response = await getUserById(userData.id);
+          setUserDetails(response?.payload || response);
+          console.log("User Details:", response);
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchUserDetails();
+  }, [userData?.id]);
+
+  return (
+    <div className="p-8">
+      <Header title={title} description={description} />
+
+      {/* Optional: Display user info */}
+      {/* {userDetails && (
+        <div className="mb-4 p-3 bg-slate-50 rounded-lg">
+          <p className="text-sm text-slate-700">
+            Logged in as:{" "}
+            <span className="font-semibold">
+              {userDetails.name || userDetails.email}
+            </span>
+          </p>
+        </div>
+      )} */}
+
+      <div className="flex flex-row items-center gap-12 border-b border-[#E0E0E0]">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -22,11 +57,9 @@ const UserTab = ({ tabs, selected, setSelected, title, description }) => {
             {tab}
           </button>
         ))}
-            
-      </div></div> 
- 
-    );
+      </div>
+    </div>
+  );
 };
 
 export default UserTab;
-

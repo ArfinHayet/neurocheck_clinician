@@ -1,5 +1,5 @@
 
-import p1 from "../../../public/svg/web_logo.svg";
+import p1 from "../../../public/svg/blacklogo.png";
 import { sendOtp } from "../../api/signup";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -32,7 +32,7 @@ const SendOtp = ({ identifier, setIdentifier, setStep }) => {
 
   const handleSubmitOtp = async () => {
     if (!identifier) {
-      toast.error("Email or phone number is required");
+      toast.error("Email is required");
       return;
     }
 
@@ -40,7 +40,7 @@ const SendOtp = ({ identifier, setIdentifier, setStep }) => {
     const isPhone = isValidPhone(identifier);
 
     if (!isEmail && !isPhone) {
-      toast.error("Please enter a valid email or phone number");
+      toast.error("Please enter a valid email");
       return;
     }
     const payload = {
@@ -62,21 +62,21 @@ const SendOtp = ({ identifier, setIdentifier, setStep }) => {
       <div className="bg-[#114654] w-full py-7 block lg:hidden"></div>
       <div className="min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md lg:bg-white p-8 rounded-lg lg:shadow-md">
-          <div className="flex items-start justify-start">
+          <div className="flex items-start justify-start mb-8">
             <img
               src={p1}
               alt="Logo"
-              width={80}
-              height={80}
-              className="w-11 h-11"
+              width={800}
+              height={800}
+              className="w-auto h-11"
             />
           </div>
 
           <h2 className="text-xl font-semibold text-[#000000] text-start my-4">
-            Enter Your Email or Phone to Get Started
+            Enter Your Email to Get Started
           </h2>
           <p className="text-start text-xs font-normal text-[#3C3C4399] mb-6">
-            Join NeuroCheckPro to begin your journey toward clarity and expert
+            Join NeuroCheck Pro to begin your journey toward clarity and expert
             guidance. It only takes a minute!
           </p>
 
@@ -84,7 +84,7 @@ const SendOtp = ({ identifier, setIdentifier, setStep }) => {
             type="text"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter Email or Phone Number"
+            placeholder="Enter Your Email"
             className="w-full px-4 py-2 placeholder:text-xs border bg-[#FFFFFF] border-[#E2E2E2] rounded-3xl outline-none"
           />
 

@@ -9,6 +9,7 @@ import { AuthContext } from "../Provider/AuthProvider";
 
 
 import profileImg from "../../public/svg/Ellipse 439.svg";
+import placeholder from "../../public/svg/placeholder.png";
 
 const navItems = [
   { label: "Dashboard", icon: LuLayoutDashboard, href: "/" },
@@ -20,7 +21,7 @@ const navItems = [
 export const Navbar = () => {
   const { pathname } = useLocation();
   const { userData } = useContext(AuthContext);
-
+console.log(userData)
   const isActive = (href) => {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
@@ -40,7 +41,7 @@ export const Navbar = () => {
       <div className="hidden md:block bg-white shadow md:min-h-screen pt-6">
         <div className="flex flex-col items-center text-center">
           <img
-            src={profileImg}
+            src={userData?.image || placeholder}
             alt="Profile"
             className="w-24 h-24 rounded-full mb-4"
           />
@@ -49,7 +50,7 @@ export const Navbar = () => {
         </div>
 
         <div className="px-5 mt-6">
-          <div className="w-full border-y border-[#E9E9E9] flex flex-col gap-1 my-3 py-5">
+          <div className="w-full border-y border-[#E9E9E9] flex flex-col gap-1 my-3 py-4">
             <p className="text-xs text-[#6C6C6C]">{day}</p>
             <p className="text-3xl font-medium text-[#3B3B3B]">{date}</p>
             <p className="text-xs text-[#6C6C6C]">{year}</p>

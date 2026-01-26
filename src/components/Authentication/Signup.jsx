@@ -31,17 +31,18 @@ const Signup = ({
           label={label}
           value={formData[name] || ""}
           onChange={handleChange}
-          className="w-full px-4 py-1 placeholder:text-xs border bg-white border-[#E2E2E2] rounded-3xl outline-none"
+          className="w-full px-4 py-1 placeholder:text-xs border bg-white border-[#E2E2E2] rounded-3xl outline-none "
         />
       ))}
 
       {/* Email (Readonly) */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-start gap-2">
         <label className="text-xs font-normal text-[#868686]">
           Email Address
         </label>
         <input
           type="email"
+          name="email"
           value={identifier || ""}
           readOnly
           className="w-full px-4 py-2 text-xs border border-[#E2E2E2] rounded-3xl outline-none bg-gray-100"
@@ -49,7 +50,7 @@ const Signup = ({
       </div>
 
       {/* Certifications */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-start gap-2">
         <label
           htmlFor="certifications"
           className="text-xs font-medium text-[#868686]"

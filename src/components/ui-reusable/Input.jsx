@@ -2,18 +2,21 @@ const Input = ({
   name,
   placeholder,
   value,
-  type = 'text',
+  type = "text",
   onChange,
-  className = '',
+  className = "",
   label,
+  
+  
   ...rest
 }) => {
   const inputId = `input-${name}`;
+  
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col items-start gap-3">
       {label && (
-        <label htmlFor={inputId} className="text-xs font-normal text-[#868686]">
+        <label htmlFor={inputId} className="text-xs font-normal text-[#868686] ">
           {label}
         </label>
       )}

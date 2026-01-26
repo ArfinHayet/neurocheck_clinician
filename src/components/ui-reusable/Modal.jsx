@@ -16,7 +16,7 @@ const Modal = ({ isOpen, closeModal, children, classname, title }) => {
           className={`bg-[#FFFFFF] flex flex-col gap-5 p-6 rounded-lg shadow-lg ${classname}`}
         >
           <div className="flex flex-row justify-between mb-4">
-            <p className="text-xl font-semibold text-[#000000]">{title}</p>
+            <p className="text-lg font-semibold text-[#000000]">{title}</p>
             <button onClick={closeModal} className="cursor-pointer">
               <RxCross2 className="text-xl " />
             </button>

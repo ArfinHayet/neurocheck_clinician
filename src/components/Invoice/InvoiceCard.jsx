@@ -10,7 +10,7 @@ const InvoiceCard = ({
   invoiceLink,
 }) => {
   return (
-    <div className="bg-[#0A48630D] p-5 rounded-xl flex justify-between items-center w-full">
+    <div className="bg-[#0A48630D] p-5 rounded-xl flex justify-between items-center w-full mb-4 ">
       {/* Left Side */}
       <div className="flex flex-col">
         <div className="flex flex-row gap-2 items-center">

@@ -64,7 +64,7 @@ const LoginForm = () => {
         <input
           type="email"
           name="email"
-          placeholder="Your E-mail or Phone"
+          placeholder="Write Your E-mail "
           value={formData.email}
           onChange={handleChange}
           className="w-full px-12 py-3 border placeholder:text-xs placeholder:text-[#00000080] border-[#E2E2E2] rounded-full focus:outline-none"

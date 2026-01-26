@@ -1,5 +1,5 @@
 
-import p1 from "../../../public/svg/web_logo.svg";
+import p1 from "../../../public/svg/blacklogo.png";
 import { verift_otp } from "../../api/signup";
 import toast from "react-hot-toast";
 
@@ -42,14 +42,14 @@ const VerifyOtp = ({ otp, setOtp, inputsRef, setStep, identifier }) => {
     <div>
       <div className="bg-[#114654] w-full py-7 block lg:hidden"></div>
       <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-white  p-8 w-[360px] text-center">
-          <div className="flex items-start justify-start">
+        <div className="bg-white  p-8  text-center rounded-md shadow-md w-full max-w-md">
+          <div className="flex items-start justify-start mb-4">
             <img
               src={p1}
               alt="Logo"
-              width={80}
-              height={80}
-              className="w-11 h-11"
+              width={800}
+              height={800}
+              className="w-auto h-11"
             />
           </div>
           <h2 className="text-xl font-semibold text-[#000000] text-start my-4">

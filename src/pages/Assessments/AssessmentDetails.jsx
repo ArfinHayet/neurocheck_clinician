@@ -28,6 +28,7 @@ const AssessmentDetails = () => {
   const [feedbackModal, setFeedbackModal] = useState(false);
   const [notes, setNotes] = useState("");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  
 
   /* ---------------- FETCH APPOINTMENTS ---------------- */
   const fetchAppointments = async () => {

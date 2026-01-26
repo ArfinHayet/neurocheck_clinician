@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -7,7 +7,7 @@ import { signupuser } from "../../api/signup";
 import { AuthContext } from "../../Provider/AuthProvider";
 
 
-import logo from "../../../public/svg/web_logo.svg";
+import logo from "../../../public/svg/blacklogo.png";
 
 const SignUpForm = ({ otp, identifier }) => {
   const [formData, setFormData] = useState({
@@ -30,6 +30,16 @@ const SignUpForm = ({ otp, identifier }) => {
   const { setUserData } = useContext(AuthContext) || {};
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (identifier) {
+      setFormData((prev) => ({
+        ...prev,
+        email: identifier,
+      }));
+    }
+  }, [identifier]);
+
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -39,6 +49,9 @@ const SignUpForm = ({ otp, identifier }) => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+
+  console.log("EMAIL:", formData.email);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,17 +94,17 @@ const SignUpForm = ({ otp, identifier }) => {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="bg-[#114654] w-full py-7 block lg:hidden" />
+      <div className="bg-[#114654] w-full py-7 block lg:hidden " />
 
       <div className="flex items-center justify-center p-8">
         <div className="w-full max-w-md lg:bg-white p-8 rounded-lg lg:shadow-md">
           <div className="flex items-start justify-start">
-            <img src={logo} alt="Logo" className="w-11 h-11" />
+            <img src={logo} alt="Logo" className="w-auto h-11" />
           </div>
 
-          <h2 className="text-2xl font-semibold text-black my-4">Sign Up</h2>
+          <h2 className="text-2xl font-semibold text-black my-2 text-left">Sign Up</h2>
 
-          <p className="text-xs text-[#3C3C4399] mb-6">
+          <p className="text-xs text-[#3C3C4399] mb-6 text-left">
             Join NeuroCheckPro to begin your journey toward clarity and expert
             guidance. It only takes a minute!
           </p>

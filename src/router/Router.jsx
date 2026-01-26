@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Signin/Login";
 import SignUp from "../pages/Signup/SignUp";
-import Dashboard from "../components/Dashboard/Dashboard";
+import Dashboard from "../pages/Dashboard/Dashboard";
 import RootLayout from "../Layout/Layout";
 import Private from "./PrivateRoute";
 import Appointments from "../pages/Appointments/Appointments";

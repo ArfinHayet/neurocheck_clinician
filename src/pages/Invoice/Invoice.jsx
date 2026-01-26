@@ -51,7 +51,7 @@ const Invoice = () => {
   if (!userData?.id) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="px-8 ">
       {invoice?.length > 0 ? (
         invoice.map((item, i) => (
           <InvoiceCard
