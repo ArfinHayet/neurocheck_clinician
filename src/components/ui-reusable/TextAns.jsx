@@ -2,7 +2,7 @@ import { GoDotFill } from "react-icons/go";
 
 const TextAns = ({ text,i, answer, score}) => {
     return (
-       <div key={i} className=" border border-[#ECECEC] rounded-lg p-2">
+       <div key={i} className=" text-left border border-[#ECECEC] rounded-lg p-2">
     <div className="flex flex-col gap-2">
       <p className="text-[#263238] font-semibold text-sm">{text}</p>
       <div className="flex flex-row justify-between gap-2">

@@ -210,7 +210,7 @@ const AssessmentDetails = () => {
   /* ======================= UI ======================= */
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <Header title="Assessment" />
+      <Header title="Assessment Submission Details" />
 
       {/* PROFILE */}
       <div className="bg-[#fbf8f6] rounded-xl p-6">
@@ -221,7 +221,7 @@ const AssessmentDetails = () => {
             label="Age"
             value={`${getAge(data.patient.dateOfBirth)} years`}
           />
-          <Info label="Assessment" value={data.assessment.category} />
+          <Info label="Assessment" value={data.assessment.name} />
           <Info label="Status" value={data.status} />
           <Info label="Type" value="Patient Assessment" />
         </div>
@@ -253,6 +253,7 @@ const AssessmentDetails = () => {
             status={item.status}
             summary={item.summaries}
             childCondition={item.assessment.category}
+            description={item.assessment.description}
           />
         ))}
 

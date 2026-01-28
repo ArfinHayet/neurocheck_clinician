@@ -10,6 +10,7 @@ import AssessmentDetails from "../pages/Assessments/AssessmentDetails";
 import InvoiceDetails from "../pages/Invoice/InvoiceDetails";
 import Prescription from "../pages/Prescription/Prescription";
 import Profile from "../pages/User/Profile";
+import SignUpForm from "../components/SignUp/SignUpForm";
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,8 @@ export const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: <SignUpForm />,
+    // element: <SignUp />,
   },
   {
     path: "/",

@@ -3,10 +3,12 @@ import { FiMoreVertical } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { getAge } from "../utils/ageConverter";
 import { timeConverter } from "../utils/timeconverter";
+import p1 from "../../../public/svg/placeholder.png";
 
 const AssessmentCard = ({
   name,
   age,
+  image,
   timeAgo,
   status,
   childCondition,
@@ -58,7 +60,7 @@ const AssessmentCard = ({
               .map((n) => n[0])
               .join("") || "NA"}
           </div> */}
-          <img className=""/>
+          <img className="h-10 w-10" src={image || p1} />
 
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
@@ -76,18 +78,17 @@ const AssessmentCard = ({
                   ? status.toUpperCase()
                   : "PENDING"}
               </span>
+              < span className="text-xs text-gray-500 ">{timeConverter(timeAgo)}</span>
               {ratings && (
                 <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-md text-xs font-medium">
                   ⭐ {ratings}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-1">
-              {getAge(age)} years • {timeConverter(timeAgo)}
-            </p>
+            <p className="text-xs text-slate-500  text-left">{getAge(age)} years</p>
 
             {/* Content - clickable area */}
-            <div onClick={handleCardClick} className="mt-3 cursor-pointer">
+            <div onClick={handleCardClick} className="mt-2  cursor-pointer">
               <p className="font-semibold text-sm text-slate-900">
                 {childCondition}
               </p>
@@ -125,7 +126,7 @@ const AssessmentCard = ({
                     className="w-full text-left px-4 py-3 hover:bg-green-50 cursor-pointer text-sm text-slate-700 hover:text-green-700 font-medium transition-colors border-b border-slate-100"
                     role="menuitem"
                   >
-                     Accept this case
+                    Accept this case
                   </button>
                   <button
                     onClick={() => {
@@ -135,7 +136,7 @@ const AssessmentCard = ({
                     className="w-full text-left px-4 py-3 hover:bg-red-50 cursor-pointer text-sm text-slate-700 hover:text-red-700 font-medium transition-colors"
                     role="menuitem"
                   >
-                     Decline this case
+                    Decline this case
                   </button>
                 </>
               )}

@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import p1 from "../../../public/svg/user-img.svg";
@@ -67,8 +65,8 @@ const SubmissionDetailsCard = ({
             rating:{ratings}
           </p>
         </div>
-        <p className="text-[#3C3C4399] text-xs mt-1">{description}</p>
-        <div className="flex flex-col gap-4 mt-4">
+        <p className="text-[#3C3C4399] text-xs mt-1 text-left ">{description}</p>
+        <div className="flex flex-col items-start justify-start  gap-4 mt-4">
           {summary.map((item, index) => (
             <div key={index}>
               <p className="text-[#4B4B4B] text-base font-semibold">

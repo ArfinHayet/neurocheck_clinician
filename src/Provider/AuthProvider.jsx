@@ -4,15 +4,15 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // true দিয়ে start করো
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    setLoading(true); // loading start
+    setLoading(true); 
     const storedUser = localStorage.getItem("userData");
     if (storedUser) {
       setUserData(JSON.parse(storedUser));
     }
-    setLoading(false); // loading শেষ
+    setLoading(false); 
   }, []);
 
   const handleLogout = () => {

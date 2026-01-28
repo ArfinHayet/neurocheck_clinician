@@ -5,8 +5,8 @@ import p1 from "../../../public/svg/blacklogo.png";
 
 const Login = () => {
   return (
-    <div className="flex items-center justify-center ">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+    <div className="flex items-center justify-center h-screen">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md   ">
         <div className="flex items-start justify-start">
           <img
             alt="logo"

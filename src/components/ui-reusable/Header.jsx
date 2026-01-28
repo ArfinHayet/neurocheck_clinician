@@ -66,7 +66,7 @@ const Header = ({ title, description }) => {
   };
 
   return (
-    <div className="flex-1 mb-8 relative">
+    <div className="flex-1 mb-8 relative ">
    
       <div className="flex flex-col md:flex-row md:justify-between md:items-center">
         <h1 className="text-2xl font-bold">{title}</h1>

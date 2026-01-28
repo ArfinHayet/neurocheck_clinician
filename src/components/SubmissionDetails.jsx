@@ -56,7 +56,7 @@ const SubmissionDetails = ({ patientId, assessmentId, score, time }) => {
   return (
     <div className="p-4">
 
-      <div className="flex gap-2 mt-4 overflow-x-auto">
+      <div className="flex gap-2 mt-0 overflow-x-auto">
         {Object.keys(answers).map((type) => (
           <button
             key={type}

@@ -225,10 +225,10 @@ const Appointments = () => {
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Patient Name
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-8 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Appointment Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  <th className="px-12 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     Date & Time
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
@@ -273,8 +273,15 @@ const Appointments = () => {
                       </span>
                     </td>
                     <td className="px-6 ">
-                      <p className=" font-medium text-slate-900 text-xs">
-                        {formatDate(appt.time)}
+                      <p className="font-medium text-slate-900 text-xs">
+                        {new Date(appt.time).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
                       </p>
                     </td>
                     <td className="px-6 ">
@@ -302,15 +309,16 @@ const Appointments = () => {
                     </td>
                     <td className="px-6 ">
                       <div className="flex justify-center items-center gap-2">
-                        <Link
-                          to={appt.link}
+                        <a
+                          href={appt.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 hover:bg-blue-50 rounded-lg transition-colors group"
                           title="Join Video Call"
                         >
                           <PiVideoCameraBold className="w-5 h-5 text-slate-600 group-hover:text-blue-600" />
-                        </Link>
+                        </a>
+
                         <button
                           onClick={() => {
                             setSelectedAppointment(appt);
@@ -469,8 +477,18 @@ const Appointments = () => {
 
               <div className="p-4 bg-slate-50 rounded-lg">
                 <p className="text-xs text-slate-600 mb-1">Date & Time</p>
-                <p className="font-semibold text-slate-900 text-sm">
-                  {formatDate(selectedAppointment.time)}
+                {/* <p className="font-semibold text-slate-900 text-sm">
+                  {selectedAppointment.time}
+                </p> */}
+                <p className="font-medium text-slate-900 text-sm">
+                  {new Date(selectedAppointment.time).toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </p>
               </div>
 

@@ -40,12 +40,22 @@ const Signup = ({
         <label className="text-xs font-normal text-[#868686]">
           Email Address
         </label>
-        <input
+        {/* <input
           type="email"
           name="email"
           value={identifier || ""}
           readOnly
           className="w-full px-4 py-2 text-xs border border-[#E2E2E2] rounded-3xl outline-none bg-gray-100"
+        /> */}
+
+        <input
+          name="email"
+          type="email"
+          placeholder="Email Address"
+
+          value={formData.email || ""}
+          onChange={handleChange}
+          className="w-full px-4 py-2 placeholder:text-xs border bg-white border-[#E2E2E2] rounded-3xl outline-none text-xs"
         />
       </div>
 

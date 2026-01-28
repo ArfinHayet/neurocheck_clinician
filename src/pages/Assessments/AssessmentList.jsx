@@ -13,6 +13,7 @@ import { IoFilter } from "react-icons/io5";
 import AssessmentDetails from "./AssessmentDetails";
 
 
+
 const AssessmentList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRateModalOpen, setIsRateModalOpen] = useState(false);
@@ -176,10 +177,11 @@ const AssessmentList = () => {
                 assessmentId={item?.assessmentId}
                 name={item?.patient?.name}
                 age={item?.patient?.dateOfBirth}
+                image={item?.patient?.image}
                 timeAgo={item?.assessment?.createdAt}
                 status={item?.status}
                 ratings={item?.ratings}
-                childCondition={item?.assessment?.category}
+                childCondition={item?.assessment?.name}
                 description={item?.assessment?.description}
                 onViewFullAssessment={() => handleView(item)}
                 onRateSummary={() => handleViewRate(item?.id)}
