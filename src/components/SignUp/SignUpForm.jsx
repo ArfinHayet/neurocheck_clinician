@@ -50,106 +50,106 @@ const SignUpForm = ({ otp, identifier }) => {
 
   console.log("EMAIL:", formData.email);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    // ✅ Updated validation - OTP & identifier remove
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.password ||
-      !formData.phone
-    ) {
-      toast.error("Please fill all required fields.");
-      return;
-    }
-
-    // ✅ Password match check
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
-
-    // ✅ Updated payload - OTP & identifier remove
-    const payload = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      password: formData.password,
-      street: formData.address,
-      role: "clinician",
-      hcpcTitle: formData.hcpcTitle,
-      regNo: formData.regNo,
-      practiceName: formData.practiceName,
-      certification: "test",
-    };
-
-    try {
-      const result = await signupuser(payload);
-
-      if (result?.payload?.token?.access_token) {
-        localStorage.setItem("accessToken", result.payload.token.access_token);
-        setUserData?.(result.payload.user);
-        toast.success("Signup successful!");
-        navigate("/", { replace: true });
-      } else if (result?.statusCode === 409) {
-        toast.error(result?.message || "Email or phone already exists.");
-      } else {
-        toast.error(result?.message || "Signup failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Something went wrong. Please try again.");
-    }
-  };
-
-  //  const handleSubmit = async (e) => {
-  //    e.preventDefault();
-
-  //    // Basic frontend validation (optional)
-  //   if (!formData.name || !formData.password || !identifier || !otp?.length) {
-  //     toast.error("Please fill all required fields and enter OTP.");
+  //   // ✅ Updated validation - OTP & identifier remove
+  //   if (
+  //     !formData.name ||
+  //     !formData.email ||
+  //     !formData.password ||
+  //     !formData.phone
+  //   ) {
+  //     toast.error("Please fill all required fields.");
   //     return;
   //   }
 
-  //   // check if identifier is phone or email
-  //   const isEmail = identifier.includes("@");
+  //   // ✅ Password match check
+  //   if (formData.password !== formData.confirmPassword) {
+  //     toast.error("Passwords do not match!");
+  //     return;
+  //   }
+
+  //   // ✅ Updated payload - OTP & identifier remove
   //   const payload = {
   //     name: formData.name,
-  //     email: isEmail ? identifier : formData.email,
-  //     phone: !isEmail ? identifier : formData.phone,
+  //     email: formData.email,
+  //     phone: formData.phone,
   //     password: formData.password,
   //     street: formData.address,
   //     role: "clinician",
-  //     identifier,
-  //     otp: otp.join(""),
   //     hcpcTitle: formData.hcpcTitle,
   //     regNo: formData.regNo,
   //     practiceName: formData.practiceName,
   //     certification: "test",
   //   };
 
-  //    try {
-  //      const result = await signupuser(payload);
+  //   try {
+  //     const result = await signupuser(payload);
 
-  //      if (result?.payload?.token?.access_token) {
-  //        // Success: store token & user data
-  //        localStorage.setItem("accessToken", result.payload.token.access_token);
-  //        setUserData?.(result.payload.user);
-  //        toast.success("Signup successful!");
-  //        navigate("/", { replace: true });
-  //      } else if (result?.statusCode === 409) {
-  //        // Conflict error: user already exists
-  //        toast.error(result?.message || "Email or phone already exists.");
-  //      } else {
-  //        // Other backend errors
-  //        toast.error(result?.message || "Signup failed. Please try again.");
-  //      }
-  //    } catch (error) {
-  //      console.error("Signup error:", error);
-  //      toast.error("Something went wrong. Please try again.");
-  //    }
-  //  };
+  //     if (result?.payload?.token?.access_token) {
+  //       localStorage.setItem("accessToken", result.payload.token.access_token);
+  //       setUserData?.(result.payload.user);
+  //       toast.success("Signup successful!");
+  //       navigate("/", { replace: true });
+  //     } else if (result?.statusCode === 409) {
+  //       toast.error(result?.message || "Email or phone already exists.");
+  //     } else {
+  //       toast.error(result?.message || "Signup failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Signup error:", error);
+  //     toast.error("Something went wrong. Please try again.");
+  //   }
+  // };
+
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+
+     // Basic frontend validation (optional)
+    if (!formData.name || !formData.password || !identifier || !otp?.length) {
+      toast.error("Please fill all required fields and enter OTP.");
+      return;
+    }
+
+    // check if identifier is phone or email
+    const isEmail = identifier.includes("@");
+    const payload = {
+      name: formData.name,
+      email: isEmail ? identifier : formData.email,
+      phone: !isEmail ? identifier : formData.phone,
+      password: formData.password,
+      street: formData.address,
+      role: "clinician",
+      identifier,
+      otp: otp.join(""),
+      hcpcTitle: formData.hcpcTitle,
+      regNo: formData.regNo,
+      practiceName: formData.practiceName,
+      certification: "test",
+    };
+
+     try {
+       const result = await signupuser(payload);
+
+       if (result?.payload?.token?.access_token) {
+         // Success: store token & user data
+         localStorage.setItem("accessToken", result.payload.token.access_token);
+         setUserData?.(result.payload.user);
+         toast.success("Signup successful!");
+         navigate("/", { replace: true });
+       } else if (result?.statusCode === 409) {
+         // Conflict error: user already exists
+         toast.error(result?.message || "Email or phone already exists.");
+       } else {
+         // Other backend errors
+         toast.error(result?.message || "Signup failed. Please try again.");
+       }
+     } catch (error) {
+       console.error("Signup error:", error);
+       toast.error("Something went wrong. Please try again.");
+     }
+   };
 
   return (
     <>
