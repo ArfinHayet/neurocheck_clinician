@@ -28,7 +28,7 @@ const UserTab = ({ tabs, selected, setSelected, title, description }) => {
   }, [userData?.id]);
 
   return (
-    <div className="p-8">
+    <div className="">
       <Header title={title} description={description} />
 
       {/* Optional: Display user info */}
@@ -42,8 +42,10 @@ const UserTab = ({ tabs, selected, setSelected, title, description }) => {
           </p>
         </div>
       )} */}
+      <div className="py-4">
+        
 
-      <div className="flex flex-row items-center gap-12 border-b border-[#E0E0E0]">
+      <div className="flex flex-row items-center gap-12 border-b border-[#E0E0E0] px-4">
         {tabs.map((tab) => (
           <button
             key={tab}
@@ -57,6 +59,7 @@ const UserTab = ({ tabs, selected, setSelected, title, description }) => {
             {tab}
           </button>
         ))}
+        </div>
       </div>
     </div>
   );

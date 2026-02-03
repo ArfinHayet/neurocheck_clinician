@@ -75,6 +75,20 @@ const loginuser = async (obj) => {
   return data;
 };
 
+const resetPasswordByEmail = async (obj) => {
+  const response = await fetch(`${domain}/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(obj),
+  });
+
+  const data = await response.json();
+  return data;
+};
+
+
 // const deleteSeries = async (obj) => {
 //   const response = await fetch(`${domain}/api/series`, {
 //     method: "DELETE",
@@ -88,4 +102,4 @@ const loginuser = async (obj) => {
 //   return data;
 // };
 
-export { sendOtp, verift_otp , signupuser , loginuser};
+export { sendOtp, verift_otp , signupuser , loginuser, resetPasswordByEmail };

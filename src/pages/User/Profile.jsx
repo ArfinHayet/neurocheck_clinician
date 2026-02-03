@@ -46,7 +46,7 @@ const Profile = () => {
         description={description}
       />
 
-      <div className="mt-4 min-h-screen">
+      <div className="pt-4 ">
         {selectedTab === "Personal Info" &&  <PersonalInfo/> }
         {selectedTab === "Availability" && <Availability />}
         {selectedTab === "Leave" && <Leave />}

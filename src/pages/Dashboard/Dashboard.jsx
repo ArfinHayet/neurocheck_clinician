@@ -101,8 +101,10 @@ const Dashboard = () => {
   //   navigation.replace("/signin");
   // };
 const handleLogoutClick = () => {
-  handleLogout(); 
-  navigate("/signin", { replace: true }); 
+  handleLogout();
+  setShowTooltip(false);
+  localStorage.removeItem("accessToken");
+  navigate("/signin", { replace: true });
 };
 
   return (

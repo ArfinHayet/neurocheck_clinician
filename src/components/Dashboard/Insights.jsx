@@ -27,7 +27,7 @@ const Insights = ({ stats }) => {
               <div className="h-full bg-green-600 rounded-full" style={{ width: "85%" }}></div>
             </div>
           </div>
-          <div>
+          {/* <div>
             <div className="flex justify-between text-sm mb-1">
               <span className="text-slate-600">Patient Satisfaction</span>
               <span className="font-medium">4.8/5.0</span>
@@ -35,7 +35,7 @@ const Insights = ({ stats }) => {
             <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-purple-600 rounded-full" style={{ width: "96%" }}></div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

@@ -11,6 +11,8 @@ import InvoiceDetails from "../pages/Invoice/InvoiceDetails";
 import Prescription from "../pages/Prescription/Prescription";
 import Profile from "../pages/User/Profile";
 import SignUpForm from "../components/SignUp/SignUpForm";
+import Guidelines from "../components/Guidelines";
+import ForgetPassword from "../pages/ForgetPass/ForgetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,10 @@ export const router = createBrowserRouter([
     path: "/signup",
     // element: <SignUpForm />,
     element: <SignUp />,
+  },
+  {
+    path: "/forget-password",
+    element: <ForgetPassword />,
   },
   {
     path: "/",
@@ -60,7 +66,8 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-
+        path: "/guidelines",
+        element: <Guidelines/>,
       },
       {
 

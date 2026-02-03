@@ -108,79 +108,13 @@ const Appointments = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 ">
       <Header
         title="Appointments"
         description="Manage your consultations, reschedule appointments, and track patient meetings"
       />
 
-      <div className=" mx-auto">
-        {/* Stats Cards */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 font-medium">
-                  Total Appointments
-                </p>
-                <p className="text-2xl font-bold text-slate-900 mt-1">
-                  {appointment?.length || 0}
-                </p>
-              </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <IoCalendarSharp className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Confirmed</p>
-                <p className="text-2xl font-bold text-green-600 mt-1">
-                  {appointment?.filter((a) => a.status === "Confirmed")
-                    .length || 0}
-                </p>
-              </div>
-              <div className="p-3 bg-green-50 rounded-lg">
-                <HiCheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 font-medium">
-                  Rescheduled
-                </p>
-                <p className="text-2xl font-bold text-orange-600 mt-1">
-                  {appointment?.filter((a) => a.status === "Rescheduled")
-                    .length || 0}
-                </p>
-              </div>
-              <div className="p-3 bg-orange-50 rounded-lg">
-                <HiClock className="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 font-medium">Cancelled</p>
-                <p className="text-2xl font-bold text-red-600 mt-1">
-                  {appointment?.filter((a) => a.status === "Cancelled")
-                    .length || 0}
-                </p>
-              </div>
-              <div className="p-3 bg-red-50 rounded-lg">
-                <HiXCircle className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </div>
-        </div> */}
-
+      <div className="p-6 mx-auto">
         {/* Filters and Search */}
         <div className=" flex justify-end  slate-200 mb-4 ">
           <div className="flex  gap-4 items-center justify-between">

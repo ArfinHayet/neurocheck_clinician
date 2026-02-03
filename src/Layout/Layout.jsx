@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 export default function RootLayout() {
   const location = useLocation();
 
-  console.log("RootLayout rendering, path:", location.pathname);
+  // console.log("RootLayout rendering, path:", location.pathname);
 
   return (
     <div className="min-h-screen flex ">

@@ -1,5 +1,3 @@
-
-
 import Header from "../../components/ui-reusable/Header";
 import AssessmentCard from "../../components/ui-reusable/AssesmentCard";
 import { useContext, useEffect, useState } from "react";
@@ -40,7 +38,7 @@ const AssessmentList = () => {
 
   const handleAccept = async (id) => {
     const obj = {
-      status: "completed",
+      status: "accepted",
       clinicianId: Number(userData?.id),
     };
 
@@ -73,11 +71,19 @@ const AssessmentList = () => {
   const fetchSubmissions = async () => {
     const res = await getAllsubmissions();
 
+    // const rawData = res?.payload?.filter(
+    //   (i) =>
+    //     i?.assessment?.type === "premium" &&
+    //     i?.clinicianId === Number(userData?.id),
+    // );
+
     const rawData = res?.payload?.filter(
       (i) =>
         i?.assessment?.type === "premium" &&
+        ["accepted", "completed"].includes(i?.status) &&
         i?.clinicianId === Number(userData?.id),
     );
+
 
     const grouped = Object?.values(
       rawData?.reduce((acc, item) => {
@@ -106,6 +112,7 @@ const AssessmentList = () => {
         return acc;
       }, {}),
     );
+    console.log("submission",grouped);
 
     setSubmission(grouped);
   };
@@ -125,11 +132,14 @@ const AssessmentList = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50 ">
       <Header
         title="Assessment Queue"
         description="Review patient assessments, provide ratings, and accept cases for consultation"
       />
+
+      <div className="p-4">
+     
 
       {/* Filters and Search */}
       <div className=" flex justify-end px-5 ">
@@ -158,6 +168,7 @@ const AssessmentList = () => {
               className="pl-10 px-4 py-2.5 border border-slate-200 rounded-lg bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
             >
               <option value="all">All Status</option>
+              <option value="accepted">Accepted</option> 
               <option value="completed">Completed</option> 
               <option value="pending">Pending</option> 
               <option value="rejected">Rejected</option> 
@@ -218,7 +229,8 @@ const AssessmentList = () => {
         maxStars={5}
         selectedId={selectedId}
         initialRating={0}
-      />
+        />
+        </div>
     </div>
   );
 };

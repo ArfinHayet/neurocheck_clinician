@@ -94,7 +94,7 @@ const StatsSection = ({ stats }) => {
         color="green"
       />
       <StatCard
-        title="Completed Today"
+        title="Completed Cases"
         value={stats.completedToday}
         icon={CheckCircle}
         color="purple"

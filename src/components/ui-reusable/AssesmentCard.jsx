@@ -36,7 +36,8 @@ const AssessmentCard = ({
   }, []);
 
   const colors = {
-    completed: "bg-green-100 text-green-700 border-green-200",
+    completed: "bg-gray-100 text-gray-700 border-gray-200",
+    accepted: "bg-green-100 text-green-700 border-green-200",
     pending: "bg-orange-100 text-orange-700 border-orange-200",
     rejected: "bg-red-100 text-red-700 border-red-200",
   };
@@ -78,14 +79,18 @@ const AssessmentCard = ({
                   ? status.toUpperCase()
                   : "PENDING"}
               </span>
-              < span className="text-xs text-gray-500 ">{timeConverter(timeAgo)}</span>
+              <span className="text-xs text-gray-500 ">
+                {timeConverter(timeAgo)}
+              </span>
               {ratings && (
                 <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded-md text-xs font-medium">
                   ⭐ {ratings}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500  text-left">{getAge(age)} years</p>
+            <p className="text-xs text-slate-500  text-left">
+              {getAge(age)} years
+            </p>
 
             {/* Content - clickable area */}
             <div onClick={handleCardClick} className="mt-2  cursor-pointer">
@@ -114,9 +119,9 @@ const AssessmentCard = ({
           {menuOpen && (
             <div
               role="menu"
-              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-20 overflow-hidden"
+              className="absolute right-0 mt-2 w-24 bg-white text-center rounded-lg shadow-lg border border-slate-200 z-20 overflow-hidden"
             >
-              {status !== "completed" && (
+              {(status === "pending" || !status) && ( 
                 <>
                   <button
                     onClick={() => {
@@ -126,7 +131,7 @@ const AssessmentCard = ({
                     className="w-full text-left px-4 py-3 hover:bg-green-50 cursor-pointer text-sm text-slate-700 hover:text-green-700 font-medium transition-colors border-b border-slate-100"
                     role="menuitem"
                   >
-                    Accept this case
+                    Accept
                   </button>
                   <button
                     onClick={() => {
@@ -136,13 +141,18 @@ const AssessmentCard = ({
                     className="w-full text-left px-4 py-3 hover:bg-red-50 cursor-pointer text-sm text-slate-700 hover:text-red-700 font-medium transition-colors"
                     role="menuitem"
                   >
-                    Decline this case
+                    Decline
                   </button>
                 </>
               )}
-              {status === "completed" && (
+
+              {(status === "accepted" ||
+                status === "completed" ||
+                status === "rejected") && (
                 <p className="px-4 py-3 text-sm text-slate-500 text-center">
-                  Case completed
+                  {status === "completed" && "Case completed"}
+                  {status === "accepted" && "Case accepted"}
+                  {status === "rejected" && "Case rejected"}
                 </p>
               )}
             </div>
