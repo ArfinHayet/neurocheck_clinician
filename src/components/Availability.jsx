@@ -3,8 +3,6 @@ import {
   getCinicianAvailabilityById,
 } from "../api/user";
 import { AuthContext } from "../Provider/AuthProvider";
-// import { AuthContext } from "../Provider/AuthProvider";
-// import { AuthContext } from "../Provider/AuthProvider";
 import { useContext, useEffect, useState } from "react";
 
 const Availability = () => {
@@ -93,9 +91,9 @@ const Availability = () => {
 
   return (
     <div className="w-full flex flex-row gap-6 px-8">
-      <div className="w-3/6 flex flex-col gap-4  space-y-4">
+      <div className="w-1/4 flex flex-col gap-4  space-y-4">
         <div>
-          <label className="block mb-4 text-[#5A5A5A] font-semibold text-sm">
+          <label className="block mb-4 text-[#5A5A5A] font-semibold text-sm text-start ">
             Availability type
           </label>
           <select

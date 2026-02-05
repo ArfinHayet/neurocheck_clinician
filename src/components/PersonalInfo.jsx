@@ -13,11 +13,17 @@ import {
   FaCertificate,
   FaIdCard,
 } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
+import ChangePassword from "./Authentication/ChangePassword";
+
 
 const PersonalInfo = () => {
   const { userData } = useContext(AuthContext) || {};
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+
+
     const navigate = useNavigate();
     console.log("AuthContext userData:", userData);
 
@@ -84,11 +90,7 @@ const PersonalInfo = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <img
-                src={userData.image || p1}
-                alt=""
-                className="h-14 w-auto"
-              />
+              <img src={userData.image || p1} alt="" className="h-14 w-auto" />
 
               <div>
                 <h2 className="text-xl font-bold text-slate-900">
@@ -103,12 +105,32 @@ const PersonalInfo = () => {
 
             {/* Edit Button */}
             <button
-              onClick={() => navigate("/profile/edit")}
+              onClick={() => setShowChangePassword(true)}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg text-sm font-medium transition-all shadow-sm"
             >
               <FaEdit className="w-4 h-4" />
-              Edit Profile
+              Change Password
             </button>
+
+            {/* Change Password Modal */}
+            {showChangePassword && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 relative">
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setShowChangePassword(false)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <FaTimes className="w-5 h-5" />
+                  </button>
+
+                  {/* ChangePassword Component */}
+                  <ChangePassword
+                    onClose={() => setShowChangePassword(false)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -121,11 +143,7 @@ const PersonalInfo = () => {
               Personal Details
             </h3>
             <div className="space-y-3">
-              <InfoRow
-                icon={FaUser}
-                label="Full Name"
-                value={userData.name}
-              />
+              <InfoRow icon={FaUser} label="Full Name" value={userData.name} />
               <InfoRow
                 icon={FaEnvelope}
                 label="Email Address"
@@ -198,7 +216,6 @@ const PersonalInfo = () => {
               />
             </div>
           </div>
-
         </div>
       </div>
     </div>

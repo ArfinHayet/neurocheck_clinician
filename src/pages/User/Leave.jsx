@@ -65,7 +65,8 @@ const Leave = () => {
   }, [userData?.id]);
 
   return (
-    <div classname="mx-8">
+      <div className="w-full  px-8">
+
       <div className="flex justify-end mb-4 ">
         <button
           onClick={() => setIsModalOpen(true)}

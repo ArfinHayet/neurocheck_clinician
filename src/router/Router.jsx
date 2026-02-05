@@ -13,6 +13,7 @@ import Profile from "../pages/User/Profile";
 import SignUpForm from "../components/SignUp/SignUpForm";
 import Guidelines from "../components/Guidelines";
 import ForgetPassword from "../pages/ForgetPass/ForgetPassword";
+import ChangePassword from "../components/Authentication/ChangePassword";
 
 export const router = createBrowserRouter([
   {
@@ -42,7 +43,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/appointments",
-        element: <Appointments /> ,
+        element: <Appointments />,
       },
       {
         path: "/assessments",
@@ -55,7 +56,6 @@ export const router = createBrowserRouter([
       {
         path: "/invoice/:assessmentId",
         element: <InvoiceDetails />,
-
       },
       {
         path: "prescription/:id",
@@ -67,13 +67,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "/guidelines",
-        element: <Guidelines/>,
+        element: <Guidelines />,
       },
       {
-
+        path: "/profile/edit",
+        element: <ChangePassword/>,
       },
-
-
-      ],
+    ],
   },
 ]);

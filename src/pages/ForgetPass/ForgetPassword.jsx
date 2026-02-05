@@ -6,7 +6,6 @@ import logo from "../../../public/svg/blacklogo.png";
 import Input from "../../components/ui-reusable/Input";
 import { Link } from "react-router";
 
-
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -219,15 +218,14 @@ const ForgetPassword = () => {
             )}
 
             {/* Back to Login */}
-                      <div className="mt-8">
-                      
-                       <Link
-to="/signin"
-             
-              className=" w-full text-center text-sm text-[#0A4863] hover:underline"
-            >
-              Back to Login
-            </Link></div>
+            <div className="mt-8">
+              <Link
+                to="/signin"
+                className=" w-full text-center text-sm text-[#0A4863] hover:underline"
+              >
+                Back to Login
+              </Link>
+            </div>
           </form>
         </div>
       </div>
