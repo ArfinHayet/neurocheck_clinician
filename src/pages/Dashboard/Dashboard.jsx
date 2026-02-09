@@ -34,7 +34,7 @@ const Dashboard = () => {
     setStats({
       pendingReviews: 4,
       upcomingAppointments: 3,
-      monthlyEarnings: 1250,
+      monthlyEarnings: 1,
       totalEarnings: 15420,
       monthlyAssessments: 12,
       totalAssessments: 65,

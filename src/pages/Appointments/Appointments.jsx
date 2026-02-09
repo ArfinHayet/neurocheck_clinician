@@ -21,11 +21,11 @@ const statusColors = {
 };
 
 const callStatusColors = {
-  Active: "text-green-600 bg-green-50", //metting running
+  Active: "text-green-600 bg-green-50", //meeting running
   Escalated: "text-blue-600 bg-blue-50", //priority
   Resolved: "text-purple-600 bg-purple-50", //completed
   Dropped: "text-orange-600 bg-orange-50", //disconnected
-  Scheduled: "text-purple-600 bg-purple-50", //upcming , not done
+  Scheduled: "text-purple-600 bg-purple-50", //upcoming, not done
   Missed: "text-red-600 bg-red-50", //patient didn't joined
 };
 
@@ -35,12 +35,14 @@ const Appointments = () => {
   const [showModal, setShowModal] = useState(false);
   const [rescheduleModal, setRescheduleModal] = useState(false);
   const [feedbackModal, setFeedbackModal] = useState(false);
+  const [callStatusModal, setCallStatusModal] = useState(false); // ✅ New
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointment, setAppointment] = useState([]);
   const [notes, setNotes] = useState("");
   const [confirmReschedule, setConfirmReschedule] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [newCallStatus, setNewCallStatus] = useState(""); // ✅ New
 
   const fetchAppointments = async () => {
     const res = await getAllappointments();
@@ -58,11 +60,19 @@ const Appointments = () => {
   const closeModal = () => {
     setShowModal(false);
   };
+
   const closeRescheduleModal = () => {
     setRescheduleModal(false);
   };
+
   const closeFeedBackModal = () => {
     setFeedbackModal(false);
+  };
+
+  // ✅ New: Close call status modal
+  const closeCallStatusModal = () => {
+    setCallStatusModal(false);
+    setNewCallStatus("");
   };
 
   const handleSubmit = async (e) => {
@@ -97,6 +107,32 @@ const Appointments = () => {
     fetchAppointments();
   };
 
+  // ✅ New: Update call status
+  const handleUpdateCallStatus = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      userId: selectedAppointment?.userId,
+      patientId: selectedAppointment?.patientId,
+      time: selectedAppointment?.time,
+      clinicianId: selectedAppointment?.clinicianId,
+      status: selectedAppointment?.status,
+      metting_status: newCallStatus, // ✅ Updated call status
+      tries: selectedAppointment?.tries,
+    };
+
+    try {
+      await updateSchedule(selectedAppointment?.id, payload);
+      alert("Call status updated successfully!");
+      setCallStatusModal(false);
+      setNewCallStatus("");
+      fetchAppointments(); // ✅ Refresh data
+    } catch (error) {
+      alert("Failed to update call status");
+      console.error(error);
+    }
+  };
+
   // Filter appointments
   const filteredAppointments = appointment?.filter((appt) => {
     const matchesSearch = appt.patient?.name
@@ -113,7 +149,6 @@ const Appointments = () => {
         title="Appointments"
         description="Manage your consultations, reschedule appointments, and track patient meetings"
       />
-
       <div className="p-6 mx-auto">
         {/* Filters and Search */}
         <div className=" flex justify-end  slate-200 mb-4 ">
@@ -263,6 +298,20 @@ const Appointments = () => {
                         >
                           <IoEyeSharp className="w-5 h-5 text-slate-600 group-hover:text-blue-600" />
                         </button>
+
+                        {/* ✅ New: Update Call Status Button */}
+                        <button
+                          onClick={() => {
+                            setSelectedAppointment(appt);
+                            setNewCallStatus(appt.metting_status);
+                            setCallStatusModal(true);
+                          }}
+                          className="p-2 hover:bg-green-50 rounded-lg transition-colors group"
+                          title="Update Call Status"
+                        >
+                          <HiCheckCircle className="w-5 h-5 text-slate-600 group-hover:text-green-600" />
+                        </button>
+
                         <button
                           onClick={() => {
                             if (appt.metting_status !== "Resolved") return;
@@ -289,6 +338,7 @@ const Appointments = () => {
                             }`}
                           />
                         </button>
+
                         <button
                           onClick={() => {
                             if (appt.tries >= 3) return;
@@ -335,192 +385,250 @@ const Appointments = () => {
             )}
           </div>
         </div>
-      </div>
 
-      {/* Confirm Reschedule Modal */}
-      {selectedAppointment && (
-        <Modal
-          classname="w-[90vw] md:w-[28vw]"
-          isOpen={confirmReschedule}
-          closeModal={() => setConfirmReschedule(false)}
-          title="Confirm Reschedule"
-        >
-          <div className="text-sm text-slate-700 space-y-4">
-            <p>Are you sure you want to reschedule this appointment?</p>
+        {/* Confirm Reschedule Modal */}
+        {selectedAppointment && (
+          <Modal
+            classname="w-[90vw] md:w-[28vw]"
+            isOpen={confirmReschedule}
+            closeModal={() => setConfirmReschedule(false)}
+            title="Confirm Reschedule"
+          >
+            <div className="text-sm text-slate-700 space-y-4">
+              <p>Are you sure you want to reschedule this appointment?</p>
 
-            <div className="flex justify-end gap-3">
-              <button
-                className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
-                onClick={() => setConfirmReschedule(false)}
-              >
-                Cancel
-              </button>
+              <div className="flex justify-end gap-3">
+                <button
+                  className="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+                  onClick={() => setConfirmReschedule(false)}
+                >
+                  Cancel
+                </button>
 
-              <button
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all"
-                onClick={() => {
-                  setConfirmReschedule(false);
-                  setRescheduleModal(true);
-                }}
-              >
-                Yes, Reschedule
-              </button>
+                <button
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all"
+                  onClick={() => {
+                    setConfirmReschedule(false);
+                    setRescheduleModal(true);
+                  }}
+                >
+                  Yes, Reschedule
+                </button>
+              </div>
             </div>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
-      {/* View Details Modal */}
-      {selectedAppointment && (
-        <Modal
-          classname="w-[45vw] max-h-[70vh]"
-          isOpen={showModal}
-          closeModal={closeModal}
-          title={
-            <div className="flex items-center justify-between gap-4 w-full pr-8">
-              <span>Appointment Details</span>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                  statusColors[selectedAppointment.status]
-                }`}
-              >
-                {selectedAppointment.status}
-              </span>
-            </div>
-          }
-        >
-          <div className="space-y-2">
-            <div className="px-4 py-2 bg-slate-50 rounded-lg flex items-center gap-4 w-full">
-              <p className="text-sm text-slate-600 mb-1">Patient Name</p>
-              <p className="font-semibold text-slate-900">
-                {selectedAppointment.displayName}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <p className="text-sm text-slate-600 mb-1">Call Status</p>
+        {/* View Details Modal */}
+        {selectedAppointment && (
+          <Modal
+            classname="w-[45vw] max-h-[70vh]"
+            isOpen={showModal}
+            closeModal={closeModal}
+            title={
+              <div className="flex items-center justify-between gap-4 w-full pr-8">
+                <span>Appointment Details</span>
                 <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                    callStatusColors[selectedAppointment.metting_status]
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                    statusColors[selectedAppointment.status]
                   }`}
                 >
-                  {selectedAppointment.metting_status}
+                  {selectedAppointment.status}
                 </span>
               </div>
-
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <p className="text-xs text-slate-600 mb-1">Date & Time</p>
-                {/* <p className="font-semibold text-slate-900 text-sm">
-                  {selectedAppointment.time}
-                </p> */}
-                <p className="font-medium text-slate-900 text-sm">
-                  {new Date(selectedAppointment.time).toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </p>
-              </div>
-
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <p className="text-xs text-slate-600 mb-1">Number of Retries</p>
+            }
+          >
+            <div className="space-y-2">
+              <div className="px-4 py-2 bg-slate-50 rounded-lg flex items-center gap-4 w-full">
+                <p className="text-sm text-slate-600 mb-1">Patient Name</p>
                 <p className="font-semibold text-slate-900">
-                  {selectedAppointment.tries}
+                  {selectedAppointment.displayName}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <p className="text-sm text-slate-600 mb-1">Call Status</p>
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                      callStatusColors[selectedAppointment.metting_status]
+                    }`}
+                  >
+                    {selectedAppointment.metting_status}
+                  </span>
+                </div>
+
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <p className="text-xs text-slate-600 mb-1">Date & Time</p>
+                  <p className="font-medium text-slate-900 text-sm">
+                    {new Date(selectedAppointment.time).toLocaleString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      },
+                    )}
+                  </p>
+                </div>
+
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <p className="text-xs text-slate-600 mb-1">
+                    Number of Retries
+                  </p>
+                  <p className="font-semibold text-slate-900">
+                    {selectedAppointment.tries}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <p className="text-xs text-slate-600 mb-1">Diagnosis</p>
+                <p className="text-slate-900">
+                  {selectedAppointment.diagnosis ?? "N/A"}
+                </p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-lg">
+                <p className="text-xs text-slate-600 mb-1">Notes</p>
+                <p className="text-slate-900">
+                  {selectedAppointment.notes_from_review ?? "N/A"}
                 </p>
               </div>
             </div>
+          </Modal>
+        )}
 
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <p className="text-xs text-slate-600 mb-1">Diagnosis</p>
-              <p className="text-slate-900">
-                {selectedAppointment.diagnosis ?? "N/A"}
-              </p>
-            </div>
+        {/* Reschedule Modal */}
+        {selectedAppointment && (
+          <Modal
+            classname="w-[90vw] md:w-[32vw]"
+            isOpen={rescheduleModal}
+            closeModal={closeRescheduleModal}
+            title="Reschedule Appointment"
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Select New Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  value={appointmentDate}
+                  onChange={(e) => setAppointmentDate(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
 
-            <div className="p-4 bg-slate-50 rounded-lg">
-              <p className="text-xs text-slate-600 mb-1">Notes</p>
-              <p className="text-slate-900">
-                {selectedAppointment.notes_from_review ?? "N/A"}
-              </p>
-            </div>
-          </div>
-        </Modal>
-      )}
-      {/* Reschedule Modal */}
-      {selectedAppointment && (
-        <Modal
-          classname="w-[90vw] md:w-[32vw]"
-          isOpen={rescheduleModal}
-          closeModal={closeRescheduleModal}
-          title="Reschedule Appointment"
-        >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Select New Date & Time
-              </label>
-              <input
-                type="datetime-local"
-                value={appointmentDate}
-                onChange={(e) => setAppointmentDate(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
+              {selectedAppointment?.tries >= 2 && (
+                <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <p className="text-sm text-orange-800">
+                    ⚠️ Warning: This appointment has been rescheduled{" "}
+                    {selectedAppointment.tries} time(s). Maximum limit is 3.
+                  </p>
+                </div>
+              )}
 
-            {selectedAppointment?.tries >= 2 && (
-              <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                <p className="text-sm text-orange-800">
-                  ⚠️ Warning: This appointment has been rescheduled{" "}
-                  {selectedAppointment.tries} time(s). Maximum limit is 3.
+              <button
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
+                type="submit"
+              >
+                Confirm Reschedule
+              </button>
+            </form>
+          </Modal>
+        )}
+
+        {/* ✅ New: Call Status Update Modal */}
+        {selectedAppointment && (
+          <Modal
+            classname="w-[90vw] md:w-[32vw]"
+            isOpen={callStatusModal}
+            closeModal={closeCallStatusModal}
+            title="Update Call Status"
+          >
+            <form onSubmit={handleUpdateCallStatus} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Select Call Status
+                </label>
+                <select
+                  value={newCallStatus}
+                  onChange={(e) => setNewCallStatus(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">-- Select Status --</option>
+                  <option value="Scheduled">Scheduled (Upcoming)</option>
+                  <option value="Active">Active (Meeting Running)</option>
+                  <option value="Resolved">Resolved (Completed)</option>
+                  <option value="Missed">Missed (Patient didn't join)</option>
+                  <option value="Dropped">Dropped (Disconnected)</option>
+                  <option value="Escalated">Escalated (Priority)</option>
+                </select>
+              </div>
+
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Current Status:</strong>{" "}
+                  {selectedAppointment.metting_status}
                 </p>
               </div>
-            )}
 
-            <button
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
-              type="submit"
-            >
-              Confirm Reschedule
-            </button>
-          </form>
-        </Modal>
-      )}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={closeCallStatusModal}
+                  className="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
+                  type="submit"
+                >
+                  Update Status
+                </button>
+              </div>
+            </form>
+          </Modal>
+        )}
 
-      {/* Feedback Modal */}
-      {selectedAppointment && (
-        <Modal
-          classname="w-[65vw] lg:w-[34vw] h-auto"
-          isOpen={feedbackModal}
-          closeModal={closeFeedBackModal}
-          title="Post Appointment Feedback"
-        >
-          <form onSubmit={handleSubmitFeedback} className="space-y-4">
-            <div>
-              <label className="block font-medium text-sm text-slate-700 mb-2">
-                Clinician Notes Post Consultation
-              </label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-36 rounded-lg border border-slate-200 p-4 bg-slate-50 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                placeholder="Enter your notes here..."
-              />
-            </div>
+        {/* Feedback Modal */}
+        {selectedAppointment && (
+          <Modal
+            classname="w-[65vw] lg:w-[34vw] h-auto"
+            isOpen={feedbackModal}
+            closeModal={closeFeedBackModal}
+            title="Post Appointment Feedback"
+          >
+            <form onSubmit={handleSubmitFeedback} className="space-y-4">
+              <div>
+                <label className="block font-medium text-sm text-slate-700 mb-2">
+                  Clinician Notes Post Consultation
+                </label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full h-36 rounded-lg border border-slate-200 p-4 bg-slate-50 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  placeholder="Enter your notes here..."
+                />
+              </div>
 
-            <button
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
-              type="submit"
-            >
-              Submit Feedback
-            </button>
-          </form>
-        </Modal>
-      )}
+              <button
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg py-3 font-medium shadow-sm transition-all"
+                type="submit"
+              >
+                Submit Feedback
+              </button>
+            </form>
+          </Modal>
+        )}
+      </div>{" "}
     </div>
   );
 };

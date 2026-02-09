@@ -3,9 +3,11 @@ import {
   Calendar,
   CheckCircle,
   DollarSign,
+  
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import { MdOutlineNotificationAdd } from "react-icons/md";
 
 const StatCard = ({
   title,
@@ -85,14 +87,14 @@ const StatsSection = ({ stats }) => {
         color="blue"
         subtitle="Next at 14:30"
       />
-      <StatCard
-        title="January Earnings"
-        value={`£${stats.monthlyEarnings}`}
+      {/* <StatCard
+        title="New Assessment"
+        value={`${stats.monthlyEarnings}`}
         change="+12.5%"
         trend="up"
-        icon={DollarSign}
+        icon={}
         color="green"
-      />
+      /> */}
       <StatCard
         title="Completed Cases"
         value={stats.completedToday}
